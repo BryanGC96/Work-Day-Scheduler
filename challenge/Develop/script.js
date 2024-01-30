@@ -1,21 +1,8 @@
 // Wrap all code that interacts with the DOM in a call to jQuery to ensure that
 // the code isn't run until the browser has finished rendering all the elements
 // in the html.
+
 $(function () {
-  // TODO: Add a listener for click events on the save button. This code should
-  // use the id in the containing time-block as a key to save the user input in
-  // local storage. HINT: What does `this` reference in the click listener
-  // function? How can DOM traversal be used to get the "hour-x" id of the
-  // time-block containing the button that was clicked? How might the id be
-  // useful when saving the description in local storage?
- 
-
-  // TODO: Add code to get any user input that was saved in localStorage and set
-  // the values of the corresponding textarea elements. HINT: How can the id
-  // attribute of each time-block be used to do this?
-  
-
-
 
 var currentDayEl = $("#currentDay");//Defines the variable with the current date.
 var today = dayjs().format("dddd, MMM D [ || Clock: ] h:mm:ss a");//Returns the date and time in the specified format, and saves it in the 'var=today' by using 'day.js'.
@@ -29,9 +16,7 @@ function updateClock() {
   }, 1000);
 };
 
-
 updateClock(); //Calls the function to display and update 'date and time' in a 12 hour format.
-
 
 const arraysOfHourId = ["hour-9","hour-10","hour-11","hour-12","hour-13","hour-14","hour-15","hour-16","hour-17"];
 const currentHour = dayjs().hour(); //Defines the current time in hours only '24 hrs format'
@@ -44,15 +29,13 @@ for (const hourId of arraysOfHourId) {
     const numericValue12HrFormat = parseInt(element.querySelector(".hour").textContent);//Gets the value inside every element that has the ".hour" in it, in text format.
 
     if (currentHour > numericValue12HrFormat) { //set hours format to "past" if the actual clock time hour allready passed the shown hour in the list.
-      element.classList.remove("future");
-      element.classList.remove("present");
+      element.classList.remove("future", "present");
       element.classList.add("past");
     } else if (currentHour === numericValue12HrFormat){ //set hours format to "present" if the actual clock time hour is the same as the shown hour in the list.
-      element.classList.remove("past");
-      element.classList.remove("future");
+      element.classList.remove("past", "future");
       element.classList.add("present");
     } else { //set hours format to "future" if the actual clock time hour has not pass the shown hour in the list.
-      element.classList.remove("present");
+      element.classList.remove("present", "past");
       element.classList.add("future");
     };
   };
@@ -81,21 +64,20 @@ changeTime15.querySelector(".hour").textContent = "3 p.m";
 changeTime16.querySelector(".hour").textContent = "4 p.m";
 changeTime17.querySelector(".hour").textContent = "5 p.m";
 
-// var stringHour9 = $("hour-9");
-// localStorage.setItem("textHr9", stringHour9.val());
+//Waits for the document to be ready.
+$(document).ready(function() { //Saves the contents in the localStorage
+  $(".saveBtn").on("click", function() { //Adds an 'eventListener' for the buttons.
+    var textValue = $(this).siblings("textarea").val(); //Gets the value of the textarea within the same parent element (they are siblings).
+    var id = $(this).closest(".row").attr("id"); //Gets the unique "id" associated with the saveBtn.
+    localStorage.setItem("text inside " + id, textValue); //Stores the value in the local storage with a key based on each ID.
+  });
 
-$(document).ready(function() {
-  $("#hour-9 .saveBtn").on("click", function(){
-    var textValue = $("#hour-9 textarea").val();
-
-    localStorage.setItem("textHr9", textValue);
+  $(".row").each(function() {
+    var id = $(this).attr("id");
+    var savedText = localStorage.getItem("text inside " + id);
+    $(this).find("textarea").val(savedText); //Starts the page by filling the rows besides the saved buttons with the saved info of each key inside the localstorage
+    //in this case, "this", refers of the saveBtn (the current element that triggered the event).
   });
 });
 
-
-
-
-
-
-  
 });
